@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { ConnectDB } from "@/lib/config/db";
-import BlogModel from "@/lib/models/BlogModel";
+import fs from "fs";
 import slugify from "slugify";
 
-import fs from 'fs';
+import { ConnectDB } from "@/lib/config/db";
+import BlogModel from "@/lib/models/BlogModel";
 
 export const runtime = "nodejs";
 
@@ -15,7 +15,6 @@ async function ensureUploadDir() {
   await mkdir(uploadDir, { recursive: true });
 }
 
-// GET: Fetch all blogs or a single blog by ID
 export async function GET(req: NextRequest) {
   await ConnectDB();
   const blogId = req.nextUrl.searchParams.get("id");
@@ -43,7 +42,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST: Create a new blog with image
 export async function POST(req: Request) {
   await ConnectDB();
 
@@ -71,7 +69,6 @@ export async function POST(req: Request) {
     const imageUrl = `/uploads/${filename}`;
     const slug = slugify(title, { lower: true, strict: true });
 
-    // Check for duplicate slugs (optional)
     const existing = await BlogModel.findOne({ slug });
     if (existing) {
       return NextResponse.json(
@@ -100,10 +97,27 @@ export async function POST(req: Request) {
   }
 }
 
-export async function DELETE(request) {
-  const id = await request.nextUrl.searchParams.get('id');
+export async function DELETE(request: NextRequest) {
+  await ConnectDB();
+  const id = request.nextUrl.searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ msg: "Missing blog ID" }, { status: 400 });
+  }
+
   const blog = await BlogModel.findById(id);
-  fs.unlink(`/public${blog.image}`, ()=>{});
+  if (!blog) {
+    return NextResponse.json({ msg: "Blog not found" }, { status: 404 });
+  }
+
+  if (blog.image) {
+    const filePath = path.join(process.cwd(), "public", blog.image);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  }
+
   await BlogModel.findByIdAndDelete(id);
-  return NextResponse.json({msg: 'Blog Deleted'});
+
+  return NextResponse.json({ success: true, msg: "Blog deleted" });
 }
