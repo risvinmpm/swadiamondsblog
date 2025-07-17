@@ -28,7 +28,7 @@ const AddFooterContent = () => {
         instagramImages,
         socialLinks,
       });
-      toast.success("✅ Footer content saved successfully!");
+      toast.success("Footer content saved successfully!");
     } catch (error) {
       toast.error("❌ Failed to save footer content.");
     }
