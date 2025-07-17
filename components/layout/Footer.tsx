@@ -32,7 +32,7 @@ const Footer = () => {
     fetchData();
   }, []);
 
-  const onSubmitHandler = async (e: React.FormEvent) => {
+   const onSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
@@ -165,8 +165,6 @@ const Footer = () => {
           <FaArrowUp />
         </button>
       </div>
-       {/* Toast Container */}
-      <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar />
     </footer>
   );
 };
