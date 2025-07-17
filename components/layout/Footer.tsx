@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify"; // Make sure you installed it
 import {
   FaTwitter,
   FaInstagram,
   FaPinterestP,
-  FaArrowUp
+  FaArrowUp,
 } from "react-icons/fa6";
 import Image from "next/image";
 
@@ -25,13 +27,26 @@ const Footer = () => {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const onSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+
+      const response = await axios.post("/api/email", formData);
+      if (response.data.success) {
+        toast.success(response.data.msg);
+        setEmail("");
+      } else {
+        toast.error(response.data.msg || "Subscription failed");
+      }
+    } catch (err) {
+      toast.error("Server error while subscribing.");
+    } finally {
       setSubmitting(false);
-      setEmail("");
-    }, 2000);
+    }
   };
 
   return (
@@ -44,19 +59,16 @@ const Footer = () => {
           </h2>
           <p className="text-base text-[#a8a8a8] leading-relaxed">
             Concept of SWA Diamonds came into being from CAPESTONE Ventures Pvt
-            Ltd, a leading name in wholesale diamond jewellers market, that does
-            business with prominent retail jewellers. Many retail jewellers who
-            deal only in gold jewellery are reluctant to add diamond jewellery
-            to their stock due to certain factors.
+            Ltd, a leading name in wholesale diamond jewellers market...
           </p>
           <div className="flex mt-10 text-lg">
-            <div className="p-2 rounded-md transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 cursor-pointer">
+            <div className="p-2 rounded-md hover:-translate-y-1 hover:bg-white/10 cursor-pointer">
               <FaTwitter className="text-[#222222]" />
             </div>
-            <div className="p-2 rounded-md transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 cursor-pointer">
+            <div className="p-2 rounded-md hover:-translate-y-1 hover:bg-white/10 cursor-pointer">
               <FaInstagram className="text-[#222222]" />
             </div>
-            <div className="p-2 rounded-md transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 cursor-pointer">
+            <div className="p-2 rounded-md hover:-translate-y-1 hover:bg-white/10 cursor-pointer">
               <FaPinterestP className="text-[#222222]" />
             </div>
           </div>
@@ -68,7 +80,7 @@ const Footer = () => {
           <p className="text-base mb-4 text-[#a8a8a8] mt-10">
             Heaven fruitful doesn&#39;t over les idays appear creeping
           </p>
-          <form onSubmit={handleSubmit} className="relative pt-10">
+          <form onSubmit={onSubmitHandler} className="relative pt-10">
             <input
               type="email"
               placeholder="Email Address"
@@ -80,6 +92,7 @@ const Footer = () => {
             <button
               type="submit"
               className="absolute right-0 bottom-3 text-white cursor-pointer"
+              disabled={submitting}
             >
               <Image src={form_icon} width={30} height={30} alt="submit" />
             </button>
