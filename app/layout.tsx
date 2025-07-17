@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 
-// Define fonts using next/font/google
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -16,9 +13,6 @@ const robotoMono = Roboto_Mono({
   subsets: ["latin"],
   display: "swap",
 });
-
-// Optional: include font CSS variables globally
-// These can be used in your CSS like: font-family: var(--font-inter);
 
 export const metadata: Metadata = {
   title: "Swadiamonds",
@@ -33,9 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
       <body className="antialiased">
-        {/* <Navbar /> */}
         {children}
-        {/* <Footer /> */}
       </body>
     </html>
   );

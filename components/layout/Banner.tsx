@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import RightSideList from "../main/RightSideList";
 import BlogList from "../main/BlogList";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 interface BannerData {
   title: string;
@@ -19,9 +20,15 @@ const Banner = () => {
     const fetchBanner = async () => {
       try {
         const res = await axios.get("/api/banner");
-        if (res.data.success) setBanner(res.data.banner);
+        console.log("Banner response:", res.data);
+        if (res.data.success) {
+          setBanner(res.data.banner);
+        } else {
+          toast.error(res.data.message || "Banner fetch failed");
+        }
       } catch (error) {
-        console.error("Failed to fetch banner", error);
+        toast.error("Failed to load banner");
+        console.error("Banner fetch error:", error);
       }
     };
 
@@ -31,9 +38,7 @@ const Banner = () => {
   return (
     <div className="border-b border-gray-200 pb-10">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-7">
-
         <div className="md:col-span-8 space-y-6">
-
           {banner && (
             <div className="relative w-full aspect-[16/10] overflow-hidden rounded-md shadow-lg">
               <Image
