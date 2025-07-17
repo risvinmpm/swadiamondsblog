@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify"; // Make sure you installed it
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   FaTwitter,
   FaInstagram,
@@ -164,6 +165,8 @@ const Footer = () => {
           <FaArrowUp />
         </button>
       </div>
+       {/* Toast Container */}
+      <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar />
     </footer>
   );
 };
