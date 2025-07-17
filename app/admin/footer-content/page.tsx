@@ -1,117 +1,140 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const AdminFooter = () => {
+const AddFooterContent = () => {
   const [aboutText, setAboutText] = useState("");
   const [newsletterText, setNewsletterText] = useState("");
-  const [instagramImages, setInstagramImages] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState(""); // for display
-  const [loading, setLoading] = useState(false);
+  const [newsletterHeading, setNewsletterHeading] = useState("");
+  const [instagramHeading, setInstagramHeading] = useState("");
+  const [instagramImages, setInstagramImages] = useState([""]);
+  const [socialLinks, setSocialLinks] = useState({
+    twitter: "",
+    instagram: "",
+    pinterest: "",
+  });
 
-  useEffect(() => {
-    const fetchFooter = async () => {
-      try {
-        const res = await axios.get("/api/footer-content");
-        if (res.data.success && res.data.data) {
-          const { aboutText, newsletterText, instagramImages } = res.data.data;
-          setAboutText(aboutText || "");
-          setNewsletterText(newsletterText || "");
-          setInstagramImages(instagramImages || []);
-          setInputValue((instagramImages || []).join(","));
-        }
-      } catch (err) {
-        console.error("Failed to fetch footer content:", err);
-      }
-    };
-
-    fetchFooter();
-  }, []);
-
-  const handleSubmit = async () => {
-    if (
-      !aboutText.trim() ||
-      !newsletterText.trim() ||
-      !Array.isArray(instagramImages) ||
-      instagramImages.length === 0
-    ) {
-      alert("All fields are required, including at least one Instagram image URL.");
-      return;
-    }
-
-    setLoading(true);
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const res = await axios.post("/api/footer-content", {
+      await axios.post("/api/footer-content", {
         aboutText,
         newsletterText,
+        newsletterHeading,
+        instagramHeading,
         instagramImages,
+        socialLinks,
       });
-
-      alert(res.data.message || "Footer content saved.");
-    } catch (error: any) {
-      console.error("Submit error:", error);
-      alert(error?.response?.data?.message || "Failed to save footer content.");
-    } finally {
-      setLoading(false);
+      toast.success("✅ Footer content saved successfully!");
+    } catch (error) {
+      toast.error("❌ Failed to save footer content.");
     }
-  };
-
-  const handleImageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const urls = e.target.value.split(",").map((url) => url.trim()).filter(Boolean);
-    setInputValue(e.target.value);
-    setInstagramImages(urls);
   };
 
   return (
-    <div className="p-10 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-6">Update Footer Content</h2>
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Add Footer Content</h2>
 
-      <label className="block mb-2 font-medium">About Text</label>
-      <textarea
-        className="border p-2 w-full mb-6 rounded"
-        value={aboutText}
-        onChange={(e) => setAboutText(e.target.value)}
-        placeholder="About SWA Diamonds..."
-        rows={4}
-      />
+      <form onSubmit={handleSubmit} className="space-y-6">
 
-      <label className="block mb-2 font-medium">Newsletter Text</label>
-      <textarea
-        className="border p-2 w-full mb-6 rounded"
-        value={newsletterText}
-        onChange={(e) => setNewsletterText(e.target.value)}
-        placeholder="Newsletter subscription text..."
-        rows={3}
-      />
+        {/* About Text */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">About Text</label>
+          <textarea
+            value={aboutText}
+            onChange={(e) => setAboutText(e.target.value)}
+            placeholder="Enter about section text..."
+            className="w-full p-3 border border-gray-300 rounded-md resize-none"
+            rows={4}
+          />
+        </div>
 
-      <label className="block mb-2 font-medium">Instagram Image URLs (comma-separated)</label>
-      <input
-        className="border p-2 w-full mb-2 rounded"
-        value={inputValue}
-        onChange={handleImageInput}
-        placeholder="/uploads/img1.jpg, /uploads/img2.jpg"
-      />
+        {/* Newsletter Section */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Newsletter Section</h3>
+          <label className="block text-sm text-gray-600 mb-1">Newsletter Heading</label>
+          <input
+            type="text"
+            value={newsletterHeading}
+            onChange={(e) => setNewsletterHeading(e.target.value)}
+            placeholder="Enter newsletter heading"
+            className="w-full p-2 border border-gray-300 rounded-md"
+          />
+          <label className="block text-sm text-gray-600 mt-4 mb-1">Newsletter Text</label>
+          <textarea
+            value={newsletterText}
+            onChange={(e) => setNewsletterText(e.target.value)}
+            placeholder="Enter newsletter text"
+            className="w-full p-3 border border-gray-300 rounded-md resize-none"
+            rows={3}
+          />
+        </div>
 
-      {/* Optional: Preview Instagram Images */}
-      <div className="grid grid-cols-3 gap-3 mt-4">
-        {instagramImages.map((url, index) => (
-          <div key={index} className="border rounded overflow-hidden">
-            <img src={url} alt={`Instagram ${index}`} className="w-full aspect-square object-cover" />
-          </div>
-        ))}
-      </div>
+        {/* Instagram Section */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Instagram Section</h3>
+          <label className="block text-sm text-gray-600 mb-1">Instagram Heading</label>
+          <input
+            type="text"
+            value={instagramHeading}
+            onChange={(e) => setInstagramHeading(e.target.value)}
+            placeholder="Enter Instagram heading"
+            className="w-full p-2 border border-gray-300 rounded-md"
+          />
+          <label className="block text-sm text-gray-600 mt-4 mb-1">Instagram Image URL</label>
+          <input
+            type="text"
+            value={instagramImages[0]}
+            onChange={(e) => setInstagramImages([e.target.value])}
+            placeholder="https://example.com/image.jpg"
+            className="w-full p-2 border border-gray-300 rounded-md"
+          />
+        </div>
 
-      <button
-        className={`mt-6 bg-blue-600 text-white px-6 py-2 rounded ${loading ? "opacity-70" : ""}`}
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        {loading ? "Saving..." : "Save"}
-      </button>
+        {/* Social Media Links */}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Social Media Links</h3>
+          <input
+            type="text"
+            value={socialLinks.twitter}
+            onChange={(e) => setSocialLinks({ ...socialLinks, twitter: e.target.value })}
+            placeholder="Twitter URL"
+            className="w-full p-2 border border-gray-300 rounded-md mb-2"
+          />
+          <input
+            type="text"
+            value={socialLinks.instagram}
+            onChange={(e) => setSocialLinks({ ...socialLinks, instagram: e.target.value })}
+            placeholder="Instagram URL"
+            className="w-full p-2 border border-gray-300 rounded-md mb-2"
+          />
+          <input
+            type="text"
+            value={socialLinks.pinterest}
+            onChange={(e) => setSocialLinks({ ...socialLinks, pinterest: e.target.value })}
+            placeholder="Pinterest URL"
+            className="w-full p-2 border border-gray-300 rounded-md"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <div className="pt-4">
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-black text-white rounded-md hover:bg-gray-900 transition"
+          >
+            Save Footer Content
+          </button>
+        </div>
+      </form>
+
+      {/* Toast Container */}
+      {/* <ToastContainer position="top-right" autoClose={3000} hideProgressBar /> */}
     </div>
   );
 };
 
-export default AdminFooter;
+export default AddFooterContent;
