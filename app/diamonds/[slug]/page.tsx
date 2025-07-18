@@ -6,7 +6,6 @@ import axios from "axios";
 import Image from "next/image";
 
 import Trend from "@/components/main/Trend";
-import Form from "@/components/main/Form";
 import SocialStats from "@/components/common/SocialStats";
 import SocialShare from "@/components/common/SocialShare";
 import DiamondContent from "@/components/blog/detail/DiamondContent";
@@ -18,6 +17,7 @@ import icon_fb from "@/public/assets/icon_fb.png";
 import icon_tw from "@/public/assets/icon_tw.png";
 import icon_ins from "@/public/assets/icon_ins.png";
 import icon_yo from "@/public/assets/icon_yo.png";
+import ContactForm from "@/app/contact/page";
 
 const socialItems = [
   { icon: icon_fb, label: "Fans", count: "8,045" },
@@ -93,7 +93,7 @@ export default function DiamondDetail() {
           <SocialShare items={socialItems} />
         </div>
 
-        <Form />
+         <ContactForm />
       </section>
       <Footer />
     </>
