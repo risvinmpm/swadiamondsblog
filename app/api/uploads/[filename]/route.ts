@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
 
-export async function GET(req: NextRequest, { params }: { params: { filename: string } }) {
-  const { filename } = params;
+export async function GET(
+  req: NextRequest,
+  context: { params: { filename: string } }
+) {
+  const { filename } = context.params;
   const filePath = path.join(process.cwd(), "uploads", filename);
 
   try {
@@ -15,7 +18,6 @@ export async function GET(req: NextRequest, { params }: { params: { filename: st
       ".jpeg": "image/jpeg",
       ".png": "image/png",
       ".webp": "image/webp",
-      ".svg": "image/svg",
     };
 
     const contentType = contentTypeMap[ext] || "application/octet-stream";
