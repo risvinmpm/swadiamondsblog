@@ -44,7 +44,11 @@ export async function PUT(req: NextRequest) {
         );
       }
 
-      const bytes = await imageFile.arrayBuffer();
+      if (!imageFile.type.startsWith("image/")) {
+      return NextResponse.json({ success: false, message: "Invalid image file" }, { status: 400 });
+    }
+
+    const bytes = await imageFile.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
       const ext = imageFile.name.split(".").pop();
