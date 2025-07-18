@@ -10,7 +10,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import { LuNotepadText, LuList } from "react-icons/lu";
 import { FaEnvelope } from "react-icons/fa";
 import { BsGem } from "react-icons/bs";
-import { MdImage } from "react-icons/md";
+import { MdImage, MdOutlineMenuBook } from "react-icons/md";
 
 import logo from "@/public/logo.svg";
 
@@ -63,7 +63,7 @@ const links = [
   {
     label: "Update Footer",
     href: "/admin/footer-content",
-    icon: <MdImage className="w-5 h-5" />
+    icon: <MdOutlineMenuBook className="w-5 h-5" />
   },
   {
     label: "Subscriptions",
