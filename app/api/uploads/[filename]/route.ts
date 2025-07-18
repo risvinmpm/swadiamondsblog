@@ -1,10 +1,12 @@
+// app/api/uploads/[filename]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
 import fs from "fs";
+import path from "path";
 
+// ✅ This is the correct signature for a dynamic route in Next.js App Router
 export async function GET(
   req: NextRequest,
-  context: { params: { filename: string } }
+  context: { params: { filename: string } } // ✅ Must use this structure
 ) {
   const { filename } = context.params;
   const filePath = path.join(process.cwd(), "uploads", filename);
@@ -27,7 +29,10 @@ export async function GET(
         "Content-Type": contentType,
       },
     });
-  } catch (err) {
-    return NextResponse.json({ success: false, message: "File not found" }, { status: 404 });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: "File not found" },
+      { status: 404 }
+    );
   }
 }
