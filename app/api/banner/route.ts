@@ -24,16 +24,26 @@ export async function PUT(req: NextRequest) {
   let imageUrl = "";
 
   if (imageFile) {
+    if (!imageFile.type.startsWith("image/")) {
+      return NextResponse.json({ success: false, message: "Invalid image file" }, { status: 400 });
+    }
+
     const bytes = await imageFile.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
     const uploadDir = path.join(process.cwd(), "public/uploads");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-    const filename = `banner-${Date.now()}-${imageFile.name}`;
+    const ext = imageFile.name.split(".").pop();
+    const filename = `banner-${Date.now()}.${ext}`;
     const filepath = path.join(uploadDir, filename);
 
     await writeFile(filepath, buffer);
+
+    if (!fs.existsSync(filepath)) {
+      return NextResponse.json({ success: false, message: "File save failed" }, { status: 500 });
+    }
+
     imageUrl = `/uploads/${filename}`;
   }
 
@@ -41,5 +51,6 @@ export async function PUT(req: NextRequest) {
   if (imageUrl) updateData.image = imageUrl;
 
   const updated = await BannerModel.findOneAndUpdate({}, updateData, { new: true, upsert: true });
+
   return NextResponse.json({ success: true, banner: updated });
 }
