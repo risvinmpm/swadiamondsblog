@@ -8,7 +8,6 @@ import axios from "axios";
 import Image from "next/image";
 
 import Trend from "@/components/main/Trend";
-import Form from "@/components/main/Form";
 import SocialStats from "@/components/common/SocialStats";
 import SocialShare from "@/components/common/SocialShare";
 import BlogContent from "@/components/blog/bloglist/BlogContent";
@@ -20,12 +19,13 @@ import icon_fb from "@/public/assets/icon_fb.png";
 import icon_tw from "@/public/assets/icon_tw.png";
 import icon_ins from "@/public/assets/icon_ins.png";
 import icon_yo from "@/public/assets/icon_yo.png";
+import ContactForm from "@/app/contact/page";
 
 const socialItems = [
   { icon: icon_fb, label: "Fans", count: "8,045" },
   { icon: icon_tw, label: "Followers", count: "5,210" },
   { icon: icon_ins, label: "Followers", count: "10,300" },
-  { icon: icon_yo, label: "Subscribers", count: "3,870" },
+  { icon: icon_yo, label: "Subscribers", count: "3,870" }
 ];
 
 export default function DiamondDetailPage() {
@@ -79,7 +79,7 @@ export default function DiamondDetailPage() {
               {new Date(data.createdAt).toLocaleDateString("en-GB", {
                 day: "2-digit",
                 month: "short",
-                year: "numeric",
+                year: "numeric"
               })}
             </p>
 
@@ -97,7 +97,7 @@ export default function DiamondDetailPage() {
           <SocialShare items={socialItems} />
         </div>
 
-        <Form />
+        <ContactForm />
       </section>
       <Footer />
     </>

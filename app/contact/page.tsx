@@ -10,12 +10,12 @@ interface FormData {
   subject: string;
 }
 
-const Form: React.FC = () => {
+const ContactForm: React.FC = () => {
   const [form, setForm] = useState<FormData>({
     message: "",
     name: "",
     email: "",
-    subject: ""
+    subject: "",
   });
 
   const handleChange = (
@@ -25,24 +25,49 @@ const Form: React.FC = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Show success message using SweetAlert
-    Swal.fire({
-      icon: "success",
-      title: "Message Sent!",
-      text: "Thank you for reaching out. We'll get back to you soon.",
-      confirmButtonColor: "#00464d"
-    });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    // Reset the form
-    setForm({
-      message: "",
-      name: "",
-      email: "",
-      subject: ""
-    });
+      const data = await res.json();
+
+      if (data.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Message Sent!",
+          text: "Thank you for reaching out. We'll get back to you soon.",
+          confirmButtonColor: "#00464d",
+        });
+
+        // Reset form
+        setForm({
+          message: "",
+          name: "",
+          email: "",
+          subject: "",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: data.message || "Something went wrong.",
+          confirmButtonColor: "#00464d",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Could not submit the message.",
+        confirmButtonColor: "#00464d",
+      });
+    }
   };
 
   return (
@@ -111,4 +136,4 @@ const Form: React.FC = () => {
   );
 };
 
-export default Form;
+export default ContactForm;
