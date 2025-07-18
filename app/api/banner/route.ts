@@ -5,52 +5,46 @@ import { writeFile } from "fs/promises";
 import path from "path";
 import fs from "fs";
 
-export async function GET() {
-  await ConnectDB();
-  try {
-    const banner = await BannerModel.findOne();
-    return NextResponse.json({ success: true, banner });
-  } catch {
-    return NextResponse.json({ success: false, message: "Failed to fetch" }, { status: 500 });
-  }
-}
-
 export async function PUT(req: NextRequest) {
   await ConnectDB();
   const formData = await req.formData();
   const title = formData.get("title") as string;
   const imageFile = formData.get("image") as File | null;
 
+  if (!title) {
+    return NextResponse.json({ success: false, message: "Title is required" }, { status: 400 });
+  }
+
   let imageUrl = "";
 
   if (imageFile) {
     if (!imageFile.type.startsWith("image/")) {
-      return NextResponse.json({ success: false, message: "Invalid image file" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "Invalid image type" }, { status: 400 });
     }
 
     const bytes = await imageFile.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
     const ext = imageFile.name.split(".").pop();
     const filename = `banner-${Date.now()}.${ext}`;
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
     const filepath = path.join(uploadDir, filename);
 
-    await writeFile(filepath, buffer);
+    // Ensure directory exists
+    fs.mkdirSync(uploadDir, { recursive: true });
 
-    if (!fs.existsSync(filepath)) {
-      return NextResponse.json({ success: false, message: "File save failed" }, { status: 500 });
-    }
+    await writeFile(filepath, buffer);
 
     imageUrl = `/uploads/${filename}`;
   }
 
-  const updateData: any = { title };
+  const updateData: Partial<{ title: string; image: string }> = { title };
   if (imageUrl) updateData.image = imageUrl;
 
-  const updated = await BannerModel.findOneAndUpdate({}, updateData, { new: true, upsert: true });
+  const updated = await BannerModel.findOneAndUpdate({}, updateData, {
+    new: true,
+    upsert: true,
+  });
 
   return NextResponse.json({ success: true, banner: updated });
 }
