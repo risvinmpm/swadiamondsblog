@@ -11,6 +11,7 @@ import { LuNotepadText, LuList } from "react-icons/lu";
 import { FaEnvelope } from "react-icons/fa";
 import { BsGem } from "react-icons/bs";
 import { MdImage, MdOutlineMenuBook } from "react-icons/md";
+import { IoMdContact } from "react-icons/io";
 
 import logo from "@/public/logo.svg";
 
@@ -59,6 +60,11 @@ const links = [
     label: "Update Banner",
     href: "/admin/updateBanner",
     icon: <MdImage className="w-5 h-5" />
+  },
+  {
+    label: "Contact",
+    href: "/admin/messages",
+    icon: <IoMdContact className="w-5 h-5" />
   },
   {
     label: "Update Footer",
