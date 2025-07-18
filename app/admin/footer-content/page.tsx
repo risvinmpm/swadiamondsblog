@@ -130,9 +130,6 @@ const AddFooterContent = () => {
           </button>
         </div>
       </form>
-
-      {/* Toast Container */}
-      {/* <ToastContainer position="top-right" autoClose={3000} hideProgressBar /> */}
     </div>
   );
 };

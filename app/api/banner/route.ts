@@ -43,3 +43,46 @@ export async function PUT(req: NextRequest) {
   const updated = await BannerModel.findOneAndUpdate({}, updateData, { new: true, upsert: true });
   return NextResponse.json({ success: true, banner: updated });
 }
+
+export async function POST(req: NextRequest) {
+  await ConnectDB();
+  try {
+    const formData = await req.formData();
+    const title = formData.get("title") as string;
+    const imageFile = formData.get("image") as File | null;
+
+    if (!title || !imageFile) {
+      return NextResponse.json(
+        { success: false, message: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const bytes = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const uploadDir = path.join(process.cwd(), "public/uploads");
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+    const filename = `banner-${Date.now()}-${imageFile.name}`;
+    const filepath = path.join(uploadDir, filename);
+
+    await writeFile(filepath, buffer);
+    const imageUrl = `/uploads/${filename}`;
+
+    const newBanner = new BannerModel({
+      title,
+      image: imageUrl,
+    });
+
+    await newBanner.save();
+
+    return NextResponse.json({ success: true, banner: newBanner });
+  } catch (error) {
+    console.error("POST error:", error);
+    return NextResponse.json(
+      { success: false, message: "Server error" },
+      { status: 500 }
+    );
+  }
+}
