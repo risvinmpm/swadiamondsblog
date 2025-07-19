@@ -12,7 +12,7 @@ const AdminMessages = () => {
   }, []);
 
   return (
-    <div className="p-10">
+    <div className="p-5 lg:p-10">
       <h1 className="text-2xl font-bold mb-6">Submitted Messages</h1>
       <div className="space-y-4">
         {messages.map((msg: any) => (
