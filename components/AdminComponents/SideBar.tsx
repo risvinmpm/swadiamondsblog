@@ -72,6 +72,11 @@ const links = [
     icon: <MdOutlineMenuBook  className="w-5 h-5" />
   },
   {
+    label: "Follw Us",
+    href: "/admin/socialstats",
+    icon: <MdOutlineMenuBook  className="w-5 h-5" />
+  },
+  {
     label: "Subscriptions",
     href: "/admin/subscriptions",
     icon: <FaEnvelope className="w-5 h-5" />
