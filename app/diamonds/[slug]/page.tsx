@@ -13,23 +13,19 @@ import ExploreMoreList from "@/components/blog/detail/ExploreMoreList";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
-import icon_fb from "@/public/assets/icon_fb.png";
-import icon_tw from "@/public/assets/icon_tw.png";
-import icon_ins from "@/public/assets/icon_ins.png";
-import icon_yo from "@/public/assets/icon_yo.png";
 import ContactForm from "@/app/contact/page";
 
-const socialItems = [
-  { icon: icon_fb, label: "Fans", count: "8,045" },
-  { icon: icon_tw, label: "Followers", count: "5,210" },
-  { icon: icon_ins, label: "Followers", count: "10,300" },
-  { icon: icon_yo, label: "Subscribers", count: "3,870" },
-];
-
+interface SocialItem {
+  _id?: string;
+  icon: string;
+  label: string;
+  count: string;
+}
 export default function DiamondDetail() {
   const { slug } = useParams();
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [socialItems, setSocialItems] = useState<SocialItem[]>([]);
 
   useEffect(() => {
     if (!slug) return;
@@ -43,6 +39,21 @@ export default function DiamondDetail() {
     };
     load();
   }, [slug]);
+
+  useEffect(() => {
+    const fetchSocialStats = async () => {
+      try {
+        const res = await fetch("/api/socialstats");
+        const data = await res.json();
+        if (data.success && data.stats?.items) {
+          setSocialItems(data.stats.items);
+        }
+      } catch (err) {
+        console.error("Failed to fetch social stats", err);
+      }
+    };
+    fetchSocialStats();
+  }, []);
 
   if (loading) return <p className="p-10">Loading…</p>;
   if (!data) return <p className="p-10 text-red-500">Diamond not found.</p>;
@@ -71,7 +82,7 @@ export default function DiamondDetail() {
               {new Date(data.createdAt).toLocaleDateString("en-GB", {
                 day: "2-digit",
                 month: "short",
-                year: "numeric",
+                year: "numeric"
               })}
             </p>
 
@@ -93,7 +104,7 @@ export default function DiamondDetail() {
           <SocialShare items={socialItems} />
         </div>
 
-         <ContactForm />
+        <ContactForm />
       </section>
       <Footer />
     </>
