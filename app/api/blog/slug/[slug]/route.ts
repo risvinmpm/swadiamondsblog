@@ -1,19 +1,20 @@
-// app/api/blog/slug/[slug]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { ConnectDB } from "@/lib/config/db";
 import BlogModel from "@/lib/models/BlogModel";
 
 export const runtime = "nodejs";
 
-// ---- GET /api/blog/slug/[slug] --------------------------------------------
 export async function GET(
   _req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }   
+  { params }: { params: { slug: string } }
 ) {
   await ConnectDB();
 
   try {
-    const { slug } = await params;              
+    const { slug } = params;
+
+    console.log("Received slug:", slug);
+
     const blog = await BlogModel.findOne({ slug }).lean();
 
     if (!blog) {
@@ -25,7 +26,7 @@ export async function GET(
 
     return NextResponse.json({ success: true, blog });
   } catch (err) {
-    console.error("GET /api/blog/slug error:", err);
+    console.error("GET /api/blog/slug/[slug] error:", err);
     return NextResponse.json(
       { success: false, msg: "Server error" },
       { status: 500 }
