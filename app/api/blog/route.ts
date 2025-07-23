@@ -15,9 +15,12 @@ async function ensureUploadDir() {
   await mkdir(uploadDir, { recursive: true });
 }
 
+// -------------------- GET Handler --------------------
 export async function GET(req: NextRequest) {
   await ConnectDB();
   const blogId = req.nextUrl.searchParams.get("id");
+
+  console.log("GET /api/blog → blogId:", blogId);
 
   try {
     if (blogId) {
@@ -42,16 +45,26 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// -------------------- POST Handler --------------------
 export async function POST(req: Request) {
   await ConnectDB();
 
   try {
     const formData = await req.formData();
+
     const title = formData.get("title")?.toString().trim();
     const description = formData.get("description")?.toString().trim();
     const file = formData.get("image") as File | null;
 
-    if (!title || !description || !file) {
+    console.log("POST /api/blog → Received formData:", {
+      title,
+      description,
+      fileType: file?.type,
+      fileName: file?.name,
+      fileSize: file?.size,
+    });
+
+    if (!title || !description || !file || !file.name) {
       return NextResponse.json(
         { success: false, msg: "Missing title, description, or image" },
         { status: 400 }
@@ -64,7 +77,15 @@ export async function POST(req: Request) {
     const filepath = path.join(uploadDir, filename);
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    await writeFile(filepath, buffer);
+    try {
+      await writeFile(filepath, buffer);
+    } catch (fileErr) {
+      console.error("Error writing file:", fileErr);
+      return NextResponse.json(
+        { success: false, msg: "Failed to save image file" },
+        { status: 500 }
+      );
+    }
 
     const imageUrl = `/uploads/${filename}`;
     const slug = slugify(title, { lower: true, strict: true });
@@ -97,9 +118,12 @@ export async function POST(req: Request) {
   }
 }
 
+// -------------------- DELETE Handler --------------------
 export async function DELETE(request: NextRequest) {
   await ConnectDB();
   const id = request.nextUrl.searchParams.get("id");
+
+  console.log("DELETE /api/blog → id:", id);
 
   if (!id) {
     return NextResponse.json({ msg: "Missing blog ID" }, { status: 400 });
@@ -112,8 +136,12 @@ export async function DELETE(request: NextRequest) {
 
   if (blog.image) {
     const filePath = path.join(process.cwd(), "public", blog.image);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    try {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    } catch (err) {
+      console.warn("Failed to delete image file:", err);
     }
   }
 
