@@ -51,11 +51,18 @@ export async function POST(req: Request) {
 
   try {
     const formData = await req.formData();
+
     const title = formData.get("title")?.toString().trim();
     const description = formData.get("description")?.toString().trim();
     const file = formData.get("image") as File | null;
 
-    console.log("POST /api/blog → title:", title, "description:", description);
+    console.log("POST /api/blog → Received formData:", {
+      title,
+      description,
+      fileType: file?.type,
+      fileName: file?.name,
+      fileSize: file?.size,
+    });
 
     if (!title || !description || !file || !file.name) {
       return NextResponse.json(
@@ -70,7 +77,15 @@ export async function POST(req: Request) {
     const filepath = path.join(uploadDir, filename);
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    await writeFile(filepath, buffer);
+    try {
+      await writeFile(filepath, buffer);
+    } catch (fileErr) {
+      console.error("Error writing file:", fileErr);
+      return NextResponse.json(
+        { success: false, msg: "Failed to save image file" },
+        { status: 500 }
+      );
+    }
 
     const imageUrl = `/uploads/${filename}`;
     const slug = slugify(title, { lower: true, strict: true });
