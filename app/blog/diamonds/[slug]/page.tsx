@@ -22,6 +22,7 @@ interface SocialItem {
   icon: string;
   label: string;
   count: string;
+  link: string;
 }
 
 export default function DiamondDetailPage() {
