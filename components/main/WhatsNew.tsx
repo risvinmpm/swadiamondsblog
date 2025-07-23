@@ -19,6 +19,7 @@ interface SocialItem {
   icon: string;
   label: string;
   count: string;
+  link: string;
 }
 
 const ITEMS_PER_PAGE = 4;

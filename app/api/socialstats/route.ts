@@ -1,4 +1,3 @@
-// app/api/socialstats/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
@@ -19,6 +18,7 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const labels = formData.getAll("labels") as string[];
   const counts = formData.getAll("counts") as string[];
+  const links = formData.getAll("links") as string[];
   const icons = formData.getAll("icons") as File[];
 
   const uploadsDir = await createUploadsDir();
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
         label,
         count: counts[i],
         icon: imageUrl,
+        link: links[i],
       };
     })
   );

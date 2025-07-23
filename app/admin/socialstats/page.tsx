@@ -10,11 +10,12 @@ interface SocialItem {
   label: string;
   count: string;
   icon: File | null;
+  link: string;
 }
 
 export default function AdminSocialStats() {
   const [items, setItems] = useState<SocialItem[]>([
-    { id: uuidv4(), label: "", count: "", icon: null },
+    { id: uuidv4(), label: "", count: "", icon: null, link: "" },
   ]);
 
   const handleChange = (
@@ -30,7 +31,7 @@ export default function AdminSocialStats() {
   const addField = () => {
     setItems([
       ...items,
-      { id: uuidv4(), label: "", count: "", icon: null },
+      { id: uuidv4(), label: "", count: "", icon: null, link: "" },
     ]);
   };
 
@@ -40,7 +41,7 @@ export default function AdminSocialStats() {
   };
 
   const handleSubmit = async () => {
-    if (items.some(item => !item.label || !item.count || !item.icon)) {
+    if (items.some(item => !item.label || !item.count || !item.icon || !item.link)) {
       return Swal.fire("Error", "All fields are required", "error");
     }
 
@@ -48,6 +49,7 @@ export default function AdminSocialStats() {
     items.forEach((item) => {
       formData.append("labels", item.label);
       formData.append("counts", item.count);
+      formData.append("links", item.link);
       if (item.icon) {
         formData.append("icons", item.icon);
       }
@@ -57,7 +59,7 @@ export default function AdminSocialStats() {
       const res = await axios.post("/api/socialstats", formData);
       if (res.data.success) {
         Swal.fire("Success", "Social stats updated", "success");
-        setItems([{ id: uuidv4(), label: "", count: "", icon: null }]);
+        setItems([{ id: uuidv4(), label: "", count: "", icon: null, link: "" }]);
       } else {
         Swal.fire("Error", "Something went wrong", "error");
       }
@@ -84,6 +86,13 @@ export default function AdminSocialStats() {
             placeholder="Count"
             value={item.count}
             onChange={(e) => handleChange(idx, "count", e.target.value)}
+            className="border px-3 py-2 w-full rounded"
+          />
+          <input
+            type="text"
+            placeholder="https://example.com/profile"
+            value={item.link}
+            onChange={(e) => handleChange(idx, "link", e.target.value)}
             className="border px-3 py-2 w-full rounded"
           />
           <input
