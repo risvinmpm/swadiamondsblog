@@ -105,9 +105,9 @@ export default function BlogDetailPage() {
           </aside>
         </main>
 
-        {/* <div className="mt-10 hidden lg:block">
+        <div className="mt-10 hidden lg:block">
           <SocialShare items={socialItems} />
-        </div> */}
+        </div>
 
         <ContactForm />
       </section>
