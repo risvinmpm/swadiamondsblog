@@ -4,6 +4,7 @@ const ItemSchema = new mongoose.Schema({
   label: String,
   count: String,
   icon: String,
+  link: String,
 });
 
 const SocialStatsSchema = new mongoose.Schema({
