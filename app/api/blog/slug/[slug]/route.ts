@@ -6,12 +6,12 @@ export const runtime = "nodejs";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   await ConnectDB();
 
   try {
-    const { slug } = params;
+    const { slug } = await params;
 
     console.log("Received slug:", slug);
 
