@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['swadiamonds.netlify.app'],
+    domains: ['www.instagram.com'],
   },
 };
 

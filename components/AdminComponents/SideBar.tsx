@@ -12,6 +12,7 @@ import { FaEnvelope } from "react-icons/fa";
 import { BsGem } from "react-icons/bs";
 import { MdImage, MdOutlineMenuBook } from "react-icons/md";
 import { IoMdContact } from "react-icons/io";
+import { IoShareSocial } from "react-icons/io5";
 
 import logo from "@/public/logo.svg";
 
@@ -74,7 +75,7 @@ const links = [
   {
     label: "Follw Us",
     href: "/admin/socialstats",
-    icon: <MdOutlineMenuBook  className="w-5 h-5" />
+    icon: <IoShareSocial  className="w-5 h-5" />
   },
   {
     label: "Subscriptions",
