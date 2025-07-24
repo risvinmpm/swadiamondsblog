@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import Head from "next/head";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,13 +26,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
-      <Head>
-        <link
-          rel="preload"
-          href="/_next/static/css/3cd83cfe34ca397f.css"
-          as="style"
-        />
-      </Head>
       <body className="antialiased">{children}</body>
     </html>
   );
